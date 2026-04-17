@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
@@ -8,9 +8,6 @@ import LogoutButton from "./LogoutButton";
 import {
     Home,
     Ticket,
-    BarChart3,
-    Users,
-    Settings,
     Plus,
     Menu,
     PanelLeftClose,
@@ -18,44 +15,50 @@ import {
     LogOut,
     Shield
 } from "lucide-react";
+import CreateTicketModal from "@/components/tickets/createticketmodal";
 
 const sidebarItems = [
     { label: "Overview", icon: Home, href: "/dashboard" },
     { label: "Tickets", icon: Ticket, href: "/dashboard/tickets" },
 ];
 
-const mockTickets = [
-    {
-        id: "TCK-1001",
-        title: "Payment failed during checkout",
-        status: "Open",
-        priority: "High",
-        category: "Payment",
-        customer: "rahul@gmail.com",
-    },
-    {
-        id: "TCK-1002",
-        title: "Unable to login with correct password",
-        status: "In Progress",
-        priority: "Medium",
-        category: "Login",
-        customer: "neha@gmail.com",
-    },
-    {
-        id: "TCK-1003",
-        title: "Refund not received",
-        status: "Resolved",
-        priority: "High",
-        category: "Refund",
-        customer: "amit@gmail.com",
-    },
-];
+
 
 export default function DashboardPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const pathname = usePathname();
     const [collapsed, setCollapsed] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
+
+    const [tickets, setTickets] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const stats = {
+        total: tickets.length,
+        open: tickets.filter((t) => t.status === "OPEN").length,
+        inProgress: tickets.filter((t) => t.status === "IN_PROGRESS").length,
+        resolved: tickets.filter((t) => t.status === "RESOLVED").length,
+    };
+
+    const fetchTickets = async () => {
+        try {
+            setLoading(true);
+
+            const res = await fetch("/api/tickets");
+            const data = await res.json();
+
+            setTickets(data);
+        } catch (err) {
+            console.error("Failed to fetch tickets", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchTickets();
+    }, []);
 
     if (status === "loading") {
         return (
@@ -108,8 +111,8 @@ export default function DashboardPage() {
                                 key={idx}
                                 href={item.href}
                                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition text-sm font-medium ${isActive
-                                        ? "bg-indigo-600 text-white"
-                                        : "hover:bg-white/10 text-gray-300"
+                                    ? "bg-indigo-600 text-white"
+                                    : "hover:bg-white/10 text-gray-300"
                                     }`}
                             >
                                 <Icon className="w-4 h-4" />
@@ -119,7 +122,13 @@ export default function DashboardPage() {
                     })}
 
                     <div className="p-3">
-                        <button className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 transition px-3 py-2 rounded-lg">
+                        <button
+                            onClick={() => {
+                                setOpenModal(true);
+                                fetchTickets();
+                            }
+                            }
+                            className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 transition px-3 py-2 rounded-lg">
                             <Plus className="w-4 h-4" />
                             {!collapsed && "Create Ticket"}
                         </button>
@@ -162,22 +171,35 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
-                    <div className="p-5 rounded-xl bg-white/5 border border-white/10">
+
+                    <div className="p-5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition">
                         <p className="text-gray-400">Total Tickets</p>
-                        <p className="text-2xl font-bold">128</p>
+                        <p className="text-2xl font-bold text-white">
+                            {stats.total}
+                        </p>
                     </div>
-                    <div className="p-5 rounded-xl bg-white/5 border border-white/10">
+
+                    <div className="p-5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition">
                         <p className="text-gray-400">Open</p>
-                        <p className="text-2xl font-bold">42</p>
+                        <p className="text-2xl font-bold text-white">
+                            {stats.open}
+                        </p>
                     </div>
-                    <div className="p-5 rounded-xl bg-white/5 border border-white/10">
+
+                    <div className="p-5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition">
                         <p className="text-gray-400">In Progress</p>
-                        <p className="text-2xl font-bold">18</p>
+                        <p className="text-2xl font-bold text-white">
+                            {stats.inProgress}
+                        </p>
                     </div>
-                    <div className="p-5 rounded-xl bg-white/5 border border-white/10">
+
+                    <div className="p-5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition">
                         <p className="text-gray-400">Resolved</p>
-                        <p className="text-2xl font-bold">68</p>
+                        <p className="text-2xl font-bold text-white">
+                            {stats.resolved}
+                        </p>
                     </div>
+
                 </div>
 
                 <div className="mt-8">
@@ -189,30 +211,66 @@ export default function DashboardPage() {
                                 <tr>
                                     <th className="p-3">ID</th>
                                     <th className="p-3">Issue</th>
-                                    <th className="p-3">Customer</th>
                                     <th className="p-3">Status</th>
                                     <th className="p-3">Priority</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {mockTickets.map((t) => (
-                                    <tr key={t.id} className="border-t border-white/10 hover:bg-white/5">
-                                        <td className="p-3 text-indigo-400">{t.id}</td>
-                                        <td className="p-3">{t.title}</td>
-                                        <td className="p-3 text-gray-300">{t.customer}</td>
-                                        <td className="p-3">
-                                            <span className="px-2 py-1 rounded bg-white/10 text-sm">
-                                                {t.status}
-                                            </span>
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan={5} className="p-6 text-center text-gray-400">
+                                            Loading tickets...
                                         </td>
-                                        <td className="p-3">{t.priority}</td>
                                     </tr>
-                                ))}
+                                ) : tickets.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={5} className="p-6 text-center text-gray-400">
+                                            No tickets found
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    tickets.map((t) => (
+                                        <tr key={t.id} className="border-t border-white/10 hover:bg-white/5">
+                                            <td className="p-3 text-indigo-400">
+                                                {t.id.slice(0, 8)}
+                                            </td>
+
+                                            <td className="p-3">{t.title}</td>
+
+                                            <td className="p-3">
+                                                <span className="px-2 py-1 rounded bg-white/10 text-sm">
+                                                    {t.status}
+                                                </span>
+                                            </td>
+
+                                            <td className="p-3">
+                                                <span
+                                                    className={`px-2 py-1 rounded text-xs font-medium
+                                                        ${t.priority === "LOW"
+                                                            ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                                                            : t.priority === "MEDIUM"
+                                                                ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                                                                : t.priority === "HIGH"
+                                                                    ? "bg-orange-500/10 text-orange-400 border border-orange-500/20"
+                                                                    : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                                        }`}
+                                                >
+                                                    {t.priority}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </main>
+
+            <CreateTicketModal
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+            />
         </div>
     );
 }
