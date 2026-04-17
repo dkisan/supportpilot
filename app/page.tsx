@@ -1,65 +1,129 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import Link from "next/link";
+
+export default function LandingPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
+
+      <header className="border-b border-white/10">
+        <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
+
+          <div className="font-semibold text-lg">
+            <Link href="/" className="hover:text-white">
+              SupportPilot
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-6 text-sm text-gray-400">
+            <Link href="#features" className="hover:text-white">
+              Features
+            </Link>
+            <Link href="#how" className="hover:text-white">
+              How
+            </Link>
+            <Link
+              href="/login"
+              className="px-4 py-2 bg-indigo-600 rounded-md hover:bg-indigo-500 text-white"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              Login
+            </Link>
+          </div>
+
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      <main className="flex-1 flex items-center">
+        <div className="max-w-5xl mx-auto px-5 py-20 grid md:grid-cols-2 gap-10 items-center">
+
+          <div>
+            <h1 className="text-4xl font-semibold leading-tight">
+              Simple ticket system for customer support
+            </h1>
+
+            <p className="text-gray-400 mt-4">
+              Manage bugs, payments, login issues and customer requests in one place.
+            </p>
+
+            <div className="mt-6 flex gap-3">
+              <Link
+                href="/login"
+                className="px-5 py-2.5 bg-indigo-600 rounded-md hover:bg-indigo-500"
+              >
+                Get Started
+              </Link>
+
+              <Link
+                href="#features"
+                className="px-5 py-2.5 border border-white/15 rounded-md hover:bg-white/5"
+              >
+                Learn More
+              </Link>
+            </div>
+          </div>
+
+          <div className="border border-white/10 bg-white/5 rounded-xl p-5 space-y-3">
+            <div className="p-3 rounded bg-white/5">💳 Payment failed</div>
+            <div className="p-3 rounded bg-white/5">🔐 Login issue</div>
+            <div className="p-3 rounded bg-white/5">🐞 Bug report</div>
+            <div className="p-3 rounded bg-white/5">💡 Feature request</div>
+          </div>
+
         </div>
       </main>
+
+      <section id="features" className="border-t border-white/10 py-16">
+        <div className="max-w-5xl mx-auto px-5 grid md:grid-cols-3 gap-6">
+
+          <div className="p-4 border border-white/10 rounded-lg bg-white/5">
+            <h3 className="font-medium">Tickets</h3>
+            <p className="text-gray-400 text-sm mt-2">
+              Track issues from open to resolved.
+            </p>
+          </div>
+
+          <div className="p-4 border border-white/10 rounded-lg bg-white/5">
+            <h3 className="font-medium">Roles</h3>
+            <p className="text-gray-400 text-sm mt-2">
+              Admin, Agent, Customer access control.
+            </p>
+          </div>
+
+          <div className="p-4 border border-white/10 rounded-lg bg-white/5">
+            <h3 className="font-medium">Fast Support</h3>
+            <p className="text-gray-400 text-sm mt-2">
+              Assign and resolve quickly.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <section id="how" className="border-t border-white/10 py-16">
+        <div className="max-w-5xl mx-auto px-5 grid md:grid-cols-3 gap-6 text-center text-sm">
+
+          <div>
+            <div className="text-indigo-400 text-lg">1</div>
+            <p className="mt-2 text-gray-300">Create ticket</p>
+          </div>
+
+          <div>
+            <div className="text-indigo-400 text-lg">2</div>
+            <p className="mt-2 text-gray-300">Agent handles</p>
+          </div>
+
+          <div>
+            <div className="text-indigo-400 text-lg">3</div>
+            <p className="mt-2 text-gray-300">Resolved</p>
+          </div>
+
+        </div>
+      </section>
+
+      <footer className="border-t border-white/10 py-6 text-center text-gray-500 text-sm">
+        SupportPilot © {new Date().getFullYear()}
+      </footer>
+
     </div>
   );
 }
